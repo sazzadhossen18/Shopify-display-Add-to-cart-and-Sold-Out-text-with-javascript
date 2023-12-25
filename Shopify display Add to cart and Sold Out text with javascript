@@ -1,0 +1,68 @@
+Html:
+====
+    <button
+      type="submit"
+      name="add"
+      id="add-to-cart"
+      class="btn btn--full add-to-cart btn--secondary"
+      {% unless current_variant.available %} disabled="disabled"{% endunless %}>
+      <span data-add-to-cart-text>
+        {{ button_text }}
+      </span>
+    </button>
+
+
+  var product = {{ product | json }}
+  
+  document.querySelectorAll('input[type="radio"]').forEach( radio =>{
+  radio.addEventListener("change", () => {
+
+     //Selected Option
+    var selectedOptions = [];
+    document.querySelectorAll('input[type="radio"]:checked').forEach( radio =>{
+        selectedOptions.push(radio.value)
+    })
+
+
+     //Finding Matched Variant
+    var matchedVariant = product.variants.find(variant => {
+      var pass = true;
+      for(var i=0; i<selectedOptions.length; i++){
+        if(selectedOptions.indexOf(variant.options[i]) == -1){
+          pass = false
+          break
+        }
+      }
+      return pass
+    })
+
+
+    //Change Product Variant Id
+    document.querySelector('#product-id').value = matchedVariant.id
+
+     //Change url
+    var url = new URLParse(window.location.href, true)
+    url.query.variant =  matchedVariant.id
+    window.history.replaceState(null, null, url.toString());
+
+    // Add To Cart
+    var addtocart = document.querySelector('.add-to-cart');
+    if(matchedVariant.available){
+        addtocart.textContent = "Add To Cart!"
+        addtocart.disabled = false
+    }else{
+        addtocart.textContent = "Out Of sTock"
+        addtocart.disabled = true
+    }
+
+
+
+
+
+    
+    
+    
+   });
+    
+  });
+
